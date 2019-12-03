@@ -19,6 +19,9 @@ class Subscriber(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.email
+
 
 class Subscription(models.Model):
     email = models.CharField(max_length=255, blank=False, unique=True)
@@ -26,5 +29,8 @@ class Subscription(models.Model):
     job = models.ForeignKey(Job, related_name="jobs", on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.email
 
 

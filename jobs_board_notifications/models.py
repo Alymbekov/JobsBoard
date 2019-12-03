@@ -1,3 +1,31 @@
-from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
-# Create your models here.
+from jobs_board_main.signals import new_subscriber
+from jobs_board_main.models import Job, Subscriber, Subscription
+
+print("helloworld")
+@receiver(new_subscriber, sender=Subscription)
+def handle_new_subscription(sender, **kwargs):
+    subscriber = kwargs['subscriber']
+    job = kwargs['job']
+    print(kwargs)
+    print("helloworld")
+    print(job)
+    message = """User {} has just subscribed to the Job {}.
+   """.format(subscriber.email, job.title)
+    print(message)
+
+
+@receiver(pre_delete, sender=Job)
+def handle_deleted_job_posting(**kwargs):
+    job = kwargs['instance']
+
+    # Find the subscribers list
+    subscribers = Subscription.objects.filter(job=job)
+
+    for subscriber in subscribers:
+        message = """Dear {}, the job posting {} by {} has been taken down.
+       """.format(subscriber.email, job.title, job.company)
+
+        print(message)
